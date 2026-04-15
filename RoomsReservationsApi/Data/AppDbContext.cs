@@ -6,8 +6,8 @@ public class AppDbContext
 {
     public List<Room> Rooms { get; set; } = new List<Room>
     {
-        new Room { Id = 1, Name = "Pokoj 1", Capacity = 2 },
-        new Room { Id = 2, Name = "Pokoj 2", Capacity = 4 }
+        new Room { Id = 1, Name = "Pokoj 1", Building = "A", Capacity = 2 },
+        new Room { Id = 2, Name = "Pokoj 2", Building = "B", Capacity = 4 }
     };
 
     public List<Reservation> Reservations { get; set; } = new List<Reservation>();
