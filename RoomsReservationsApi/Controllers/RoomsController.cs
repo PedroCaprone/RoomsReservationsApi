@@ -20,4 +20,13 @@ public class RoomsController : ControllerBase
     {
         return Ok(_context.Rooms);
     }
+    
+    [HttpPost]
+    public ActionResult<Room> AddRoom(Room room)
+    {
+        room.Id = _context.Rooms.Count + 1;
+        _context.Rooms.Add(room);
+
+        return CreatedAtAction(nameof(GetRooms), new { id = room.Id }, room);
+    }
 }
