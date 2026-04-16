@@ -24,6 +24,18 @@ public class ReservationsController : ControllerBase
     [HttpPost]
     public ActionResult<Reservation> AddReservation(Reservation reservation)
     {
+        var roomExists = _context.Rooms.Any(r => r.Id == reservation.RoomId);
+
+        if (!roomExists)
+        {
+            return BadRequest("Room does not exist.");
+        }
+
+        if (reservation.From >= reservation.To)
+        {
+            return BadRequest("Reservation end time must be later than start time.");
+        }
+
         reservation.Id = _context.Reservations.Count + 1;
         _context.Reservations.Add(reservation);
 
