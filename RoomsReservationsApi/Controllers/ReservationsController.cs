@@ -35,6 +35,17 @@ public class ReservationsController : ControllerBase
         {
             return BadRequest("Reservation end time must be later than start time.");
         }
+        
+        var conflict = _context.Reservations.Any(r =>
+            r.RoomId == reservation.RoomId &&
+            reservation.From < r.To &&
+            reservation.To > r.From
+        );
+
+        if (conflict)
+        {
+            return BadRequest("Room is already reserved in this time.");
+        }
 
         reservation.Id = _context.Reservations.Count + 1;
         _context.Reservations.Add(reservation);
