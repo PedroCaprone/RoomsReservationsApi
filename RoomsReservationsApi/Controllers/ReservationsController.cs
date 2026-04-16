@@ -20,36 +20,70 @@ public class ReservationsController : ControllerBase
     {
         return Ok(_context.Reservations);
     }
-    
+
+    [HttpGet("{id}")]
+    public ActionResult<Reservation> GetReservationById(int id)
+    {
+        var reservation = _context.Reservations.FirstOrDefault(r => r.Id == id);
+
+        if (reservation == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(reservation);
+    }
+
     [HttpPost]
     public ActionResult<Reservation> AddReservation(Reservation reservation)
     {
-        var roomExists = _context.Rooms.Any(r => r.Id == reservation.RoomId);
+        var room = _context.Rooms.FirstOrDefault(r => r.Id == reservation.RoomId);
 
-        if (!roomExists)
+        if (room == null)
         {
             return BadRequest("Room does not exist.");
         }
 
-        if (reservation.From >= reservation.To)
+        if (!room.IsActive)
         {
-            return BadRequest("Reservation end time must be later than start time.");
+            return BadRequest("Room is not active.");
         }
-        
+
+        if (reservation.EndTime <= reservation.StartTime)
+        {
+            return BadRequest("EndTime must be later than StartTime.");
+        }
+
         var conflict = _context.Reservations.Any(r =>
             r.RoomId == reservation.RoomId &&
-            reservation.From < r.To &&
-            reservation.To > r.From
+            r.Date == reservation.Date &&
+            reservation.StartTime < r.EndTime &&
+            reservation.EndTime > r.StartTime
         );
 
         if (conflict)
         {
-            return BadRequest("Room is already reserved in this time.");
+            return Conflict("Room is already reserved in this time.");
         }
 
         reservation.Id = _context.Reservations.Count + 1;
         _context.Reservations.Add(reservation);
 
-        return CreatedAtAction(nameof(GetReservations), new { id = reservation.Id }, reservation);
+        return CreatedAtAction(nameof(GetReservationById), new { id = reservation.Id }, reservation);
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteReservation(int id)
+    {
+        var reservation = _context.Reservations.FirstOrDefault(r => r.Id == id);
+
+        if (reservation == null)
+        {
+            return NotFound();
+        }
+
+        _context.Reservations.Remove(reservation);
+
+        return NoContent();
     }
 }

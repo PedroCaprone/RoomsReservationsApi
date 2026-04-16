@@ -10,8 +10,14 @@ public class Room
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    public string Building { get; set; } = string.Empty;
+    public string BuildingCode { get; set; } = string.Empty;
 
-    [Range(1, 500)]
+    public int Floor { get; set; }
+
+    [Range(1, int.MaxValue)]
     public int Capacity { get; set; }
+
+    public bool HasProjector { get; set; }
+
+    public bool IsActive { get; set; }
 }

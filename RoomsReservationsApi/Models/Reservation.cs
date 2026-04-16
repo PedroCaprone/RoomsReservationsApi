@@ -10,11 +10,20 @@ public class Reservation
     public int RoomId { get; set; }
 
     [Required]
-    public string ReservedBy { get; set; } = string.Empty;
+    public string OrganizerName { get; set; } = string.Empty;
 
     [Required]
-    public DateTime From { get; set; }
+    public string Topic { get; set; } = string.Empty;
 
     [Required]
-    public DateTime To { get; set; }
+    public DateOnly Date { get; set; }
+
+    [Required]
+    public TimeOnly StartTime { get; set; }
+
+    [Required]
+    public TimeOnly EndTime { get; set; }
+
+    [Required]
+    public string Status { get; set; } = string.Empty;
 }
